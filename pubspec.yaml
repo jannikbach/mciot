@@ -40,6 +40,8 @@ dependencies:
   sensors_plus: ^1.2.1
   esense_flutter: ^0.4.3
   audio_service: ^0.18.9
+  audioplayers: ^2.0.0
+  file_picker: ^5.2.5
 
 dev_dependencies:
   flutter_test:

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:esense_flutter/esense.dart';
 import 'dart:async';
-
 import './stream_chart/stream_chart.dart';
 import './stream_chart/chart_legend.dart';
-import 'package:audio_service/audio_service.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:file_picker/file_picker.dart';
+
+
 
 void main() => runApp(MyApp());
+
+String _mp3FilePath = "";
+final AudioPlayer audioPlayer = AudioPlayer();
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -44,21 +50,10 @@ class _BluetoothAccelerometerState extends State<BluetoothAccelerometer> {
   @override
   void initState() {
     super.initState();
+    _selectMp3File();
     // Connect to the Bluetooth headphones
     _connectToESense();
     }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Column(
-  //     children: <Widget>[
-  //       Text('Device: $_deviceName'),
-  //       Text('X: $_x'),
-  //       Text('Y: $_y'),
-  //       Text('Z: $_z'),
-  //     ],
-  //   );
-  // }
 
 
   @override
@@ -130,6 +125,12 @@ Future<void> _connectToESense() async {
 
 List<double> _handleAccel(SensorEvent event) {
   if (event.accel != null) {
+    if (event.accel![0].toDouble()>1.5) {
+      audioPlayer.play(AssetSource(_mp3FilePath));
+    }
+    if (event.accel![0].toDouble()<-1.5){
+      audioPlayer.stop();
+    }
     return [
       event.accel![0].toDouble(),
       event.accel![1].toDouble(),
@@ -139,13 +140,6 @@ List<double> _handleAccel(SensorEvent event) {
     return [0.0, 0.0, 0.0];
   }
 }
-
-
-
-  void skipToNextSong() {
-    // Skip to the next song
-    AudioService.skipToNext();
-  }
 }
 
 
@@ -170,3 +164,12 @@ class ReconnectButton extends StatelessWidget {
     );
   }
 }
+
+
+_selectMp3File()  {
+  _mp3FilePath = FilePicker.platform.pickFiles().toString();
+}
+
+
+
+
